@@ -119,16 +119,18 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
 
   openBookingModal(mode: 'select' | 'random') {
     console.log(mode);
+    
+    // ************** Creating the Modal with the CreateBookingComponent will be shown inside it
     this.modalCtrl
       .create({
         component: CreateBookingComponent,
-        componentProps: { selectedPlace: this.place, selectedMode: mode }
+        componentProps: { selectedPlace: this.place, selectedMode: mode }   // Data being passed to the component
       })
       .then(modalEl => {
-        modalEl.present();
-        return modalEl.onDidDismiss();
+        modalEl.present();                    //***** shown the modal
+        return modalEl.onDidDismiss();        //***** this is a promise that will resolve when the CreateBookingComponent dismisses (aka closes) the modal
       })
-      .then(resultData => {
+      .then(resultData => {                   //***** the promise is resolved with the data returned by CreateBookingComponent
         if (resultData.role === 'confirm') {
           this.loadingCtrl
             .create({ message: 'Booking place...' })
