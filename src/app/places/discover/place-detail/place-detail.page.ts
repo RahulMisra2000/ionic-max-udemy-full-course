@@ -97,13 +97,13 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
           {
             text: 'Select Date',
             handler: () => {
-              this.openBookingModal('select');
+              this.openBookingModal('select');          //*********** Start the modal processing 
             }
           },
           {
             text: 'Random Date',
             handler: () => {
-              this.openBookingModal('random');
+              this.openBookingModal('random');          //*********** Start the modal processing 
             }
           },
           {
