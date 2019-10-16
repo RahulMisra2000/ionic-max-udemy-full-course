@@ -16,6 +16,10 @@ export class CreateBookingComponent implements OnInit {
   startDate: string;
   endDate: string;
 
+  
+  //***************** Because this component is specified at the time a modal is created in another page, this component
+  //                  gets the modal controller DI'ed so it can dismiss the modal when this component is done and then send
+  //                  some data back to the page that created the modal
   constructor(private modalCtrl: ModalController) {}
 
   ngOnInit() {
@@ -41,6 +45,10 @@ export class CreateBookingComponent implements OnInit {
   }
 
   onCancel() {
+    //******* First parameter is the data being sent back. Because the cancel button was clicked by the user on the modal
+    //        so no data is being sent back and hence null.
+    //        The second parameter is a developer defined role so it is easy to check in the caller what the user did 
+    
     this.modalCtrl.dismiss(null, 'cancel');
   }
 
@@ -49,6 +57,7 @@ export class CreateBookingComponent implements OnInit {
       return;
     }
 
+    //************ dismiss() is how the modal is CLOSED and the data sent back
     this.modalCtrl.dismiss(
       {
         bookingData: {
