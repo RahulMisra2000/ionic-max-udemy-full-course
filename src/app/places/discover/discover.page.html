@@ -11,6 +11,9 @@
 </ion-header>
 
 <ion-content padding>
+  <!-- ***************** Segmented Button
+       when any of the button is clicked the ionChange event is raised and our event handler gets called
+  -->
   <ion-segment (ionChange)="onFilterUpdate($event)">
     <ion-segment-button value="all" checked>All Places</ion-segment-button>
     <ion-segment-button value="bookable">Bookable Places</ion-segment-button>
