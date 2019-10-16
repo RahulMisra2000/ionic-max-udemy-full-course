@@ -32,6 +32,8 @@ export class OffersPage implements OnInit, OnDestroy {
   }
 
   onEdit(offerId: string, slidingItem: IonItemSliding) {
+    //*********** Notice we are closing the sliding item before navigating away to another page so that if we come back to this
+    //            page, the sliding item is not slid open
     slidingItem.close();
     this.router.navigate(['/', 'places', 'tabs', 'offers', 'edit', offerId]);
     console.log('Editing item', offerId);
