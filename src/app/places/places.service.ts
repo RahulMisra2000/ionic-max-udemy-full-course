@@ -54,14 +54,21 @@ interface PlaceData {
 @Injectable({
   providedIn: 'root'
 })
-export class PlacesService {
-  private _places = new BehaviorSubject<Place[]>([]);
 
-  get places() {
+
+export class PlacesService {
+  private _places = new BehaviorSubject<Place[]>([]);                               /* **** PRIVATE ******* */
+
+  constructor(private authService: AuthService, private http: HttpClient) {}
+  
+  
+  /* *** This is the Observable extracted from the BehaviorSubject. ************************************************** */
+  /*     It can be used by this service, other services and components to get a list of places whenever it changes *** */
+  get places() {                                                          
     return this._places.asObservable();
   }
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+
 
   fetchPlaces() {
     return this.authService.token.pipe(
@@ -90,11 +97,12 @@ export class PlacesService {
             );
           }
         }
-        return places;
-        // return [];
+        return places;                                  /* *** Remember whatever is returned by an operator in a pipe, gets wrapped into an obervable and becomes
+        // return [];                                   /* *** input for the next operator in line */
       }),
-      tap(places => {
-        this._places.next(places);
+      tap(places => {                                   /* *** tap is a special operator that lets us tap into the stream w/o affecting the stream */
+        this._places.next(places);                      /* *** Here we are using the BehaviorSubject to emit a value. As a result, the observable associated with this
+                                                        /* *** BehaviorSubject lights up and subscribers to it will receive the value */
       })
     );
   }
