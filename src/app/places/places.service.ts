@@ -147,65 +147,39 @@ export class PlacesService {
     );
   }
 
-  addPlace(
-    title: string,
-    description: string,
-    price: number,
-    dateFrom: Date,
-    dateTo: Date,
-    location: PlaceLocation,
-    imageUrl: string
-  ) {
+  addPlace(title: string,description: string,price: number,dateFrom: Date,dateTo: Date,location: PlaceLocation,imageUrl: string) {
     let generatedId: string;
     let fetchedUserId: string;
     let newPlace: Place;
     return this.authService.userId.pipe(
       take(1),
       switchMap(userId => {
-        fetchedUserId = userId;
-        return this.authService.token;
+            fetchedUserId = userId;
+            return this.authService.token;
       }),
       take(1),
       switchMap(token => {
-        if (!fetchedUserId) {
-          throw new Error('No user found!');
-        }
-        newPlace = new Place(
-          Math.random().toString(),
-          title,
-          description,
-          imageUrl,
-          price,
-          dateFrom,
-          dateTo,
-          fetchedUserId,
-          location
-        );
-        return this.http.post<{ name: string }>(
-          `https://ionic-angular-course.firebaseio.com/offered-places.json?auth=${token}`,
-          {
-            ...newPlace,
-            id: null
-          }
-        );
+            if (!fetchedUserId) {
+              throw new Error('No user found!');
+            }
+            newPlace = new Place( Math.random().toString(), title, description, imageUrl, price, dateFrom, dateTo, fetchedUserId, location);
+            return this.http.post<{ name: string }>(`https://ionic-angular-course.firebaseio.com/offered-places.json?auth=${token}`,
+                                    {
+                                      ...newPlace,
+                                      id: null
+                                    }
+            );
       }),
       switchMap(resData => {
-        generatedId = resData.name;
-        return this.places;
+            generatedId = resData.name;
+            return this.places;
       }),
       take(1),
       tap(places => {
-        newPlace.id = generatedId;
-        this._places.next(places.concat(newPlace));
+            newPlace.id = generatedId;
+            this._places.next(places.concat(newPlace));
       })
-    );
-    // return this.places.pipe(
-    //   take(1),
-    //   delay(1000),
-    //   tap(places => {
-    //     this._places.next(places.concat(newPlace));
-    //   })
-    // );
+    );    
   }
 
   updatePlace(placeId: string, title: string, description: string) {
