@@ -34,24 +34,21 @@ export class LocationPickerComponent implements OnInit {
   ngOnInit() {}
 
   onPickLocation() {
+    
     this.actionSheetCtrl
       .create({
-        header: 'Please Choose',
-        buttons: [
-          {
-            text: 'Auto-Locate',
-            handler: () => {
-              this.locateUser();
-            }
-          },
-          {
-            text: 'Pick on Map',
-            handler: () => {
-              this.openMap();
-            }
-          },
-          { text: 'Cancel', role: 'cancel' }
-        ]
+            header: 'Please Choose',
+            buttons: [
+              {
+                text: 'Auto-Locate',
+                handler: () => { this.locateUser(); }
+              },
+              {
+                text: 'Pick on Map',
+                handler: () => { this.openMap(); }
+              },
+              { text: 'Cancel', role: 'cancel' }
+            ]
       })
       .then(actionSheetEl => {
         actionSheetEl.present();
@@ -66,12 +63,9 @@ export class LocationPickerComponent implements OnInit {
     this.isLoading = true;
     Plugins.Geolocation.getCurrentPosition()
       .then(geoPosition => {
-        const coordinates: Coordinates = {
-          lat: geoPosition.coords.latitude,
-          lng: geoPosition.coords.longitude
-        };
-        this.createPlace(coordinates.lat, coordinates.lng);
-        this.isLoading = false;
+          const coordinates: Coordinates = { lat: geoPosition.coords.latitude, lng: geoPosition.coords.longitude  };
+          this.createPlace(coordinates.lat, coordinates.lng);
+          this.isLoading = false;
       })
       .catch(err => {
         this.isLoading = false;
@@ -91,35 +85,30 @@ export class LocationPickerComponent implements OnInit {
 
   private openMap() {
     this.modalCtrl.create({ component: MapModalComponent }).then(modalEl => {
-      modalEl.onDidDismiss().then(modalData => {
-        if (!modalData.data) {
-          return;
-        }
-        const coordinates: Coordinates = {
-          lat: modalData.data.lat,
-          lng: modalData.data.lng
-        };
-        this.createPlace(coordinates.lat, coordinates.lng);
-      });
-      modalEl.present();
-    });
+        
+         modalEl.onDidDismiss().then(modalData => {
+                if (!modalData.data) {
+                  return;
+                }
+                const coordinates: Coordinates = {
+                  lat: modalData.data.lat,
+                  lng: modalData.data.lng
+                };
+                this.createPlace(coordinates.lat, coordinates.lng);
+        });  /* onDidDismiss .. then */
+      
+        modalEl.present();
+    });   /* create ... then */
   }
 
   private createPlace(lat: number, lng: number) {
-    const pickedLocation: PlaceLocation = {
-      lat: lat,
-      lng: lng,
-      address: null,
-      staticMapImageUrl: null
-    };
+    const pickedLocation: PlaceLocation = {      lat: lat,      lng: lng,      address: null,      staticMapImageUrl: null    };
     this.isLoading = true;
     this.getAddress(lat, lng)
       .pipe(
         switchMap(address => {
           pickedLocation.address = address;
-          return of(
-            this.getMapImage(pickedLocation.lat, pickedLocation.lng, 14)
-          );
+          return of( this.getMapImage(pickedLocation.lat, pickedLocation.lng, 14) );
         })
       )
       .subscribe(staticMapImageUrl => {
