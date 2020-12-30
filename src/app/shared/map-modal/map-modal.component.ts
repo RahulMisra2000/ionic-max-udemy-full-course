@@ -79,28 +79,34 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  /* *** RM Great way to dynamically add <script tag *************************************************************** */
   private getGoogleMaps(): Promise<any> {
+    
     const win = window as any;
     const googleModule = win.google;
     if (googleModule && googleModule.maps) {
-      return Promise.resolve(googleModule.maps);
+        return Promise.resolve(googleModule.maps);
     }
+    
     return new Promise((resolve, reject) => {
-      const script = document.createElement('script');
-      script.src =
-        'https://maps.googleapis.com/maps/api/js?key=' +
-        environment.googleMapsAPIKey;
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-      script.onload = () => {
-        const loadedGoogleModule = win.google;
-        if (loadedGoogleModule && loadedGoogleModule.maps) {
-          resolve(loadedGoogleModule.maps);
-        } else {
-          reject('Google maps SDK not available.');
-        }
-      };
+        const script = document.createElement('script');
+        
+        // This SDK attaches google object to the window object and that information we are counting on for this entire logic to work ************************
+        script.src = 'https://maps.googleapis.com/maps/api/js?key=' + environment.googleMapsAPIKey;    // This is the SDK
+        script.async = true;
+        script.defer = true;
+        document.body.appendChild(script);
+
+        script.onload = () => {
+          const loadedGoogleModule = win.google;                        // The SDK supposedly attaches google object to the window object and to it maps object as well
+          if (loadedGoogleModule && loadedGoogleModule.maps) {
+            resolve(loadedGoogleModule.maps);
+          } else {
+            reject('Google maps SDK not available.');
+          }
+        };
     });
+    
+    
   }
 }
