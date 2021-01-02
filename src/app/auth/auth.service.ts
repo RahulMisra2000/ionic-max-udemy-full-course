@@ -89,7 +89,7 @@ export class AuthService implements OnDestroy {
       tap(user => {
         if (user) {
           this._user.next(user);
-          this.autoLogout(user.tokenDuration);
+          this.setNewTimer(user.tokenDuration);
         }
       }),
       map(user => {
@@ -134,7 +134,7 @@ export class AuthService implements OnDestroy {
     }
   }
 
-  private autoLogout(duration: number) {
+  private setNewTimer(duration: number) {
     if (this.activeLogoutTimer) {
       clearTimeout(this.activeLogoutTimer);
     }
@@ -144,37 +144,16 @@ export class AuthService implements OnDestroy {
   }
 
   private setUserData(userData: AuthResponseData) {
-    const expirationTime = new Date(
-      new Date().getTime() + +userData.expiresIn * 1000
-    );
-    const user = new User(
-      userData.localId,
-      userData.email,
-      userData.idToken,
-      expirationTime
-    );
+    const expirationTime = new Date(new Date().getTime() + +userData.expiresIn * 1000);
+    const user = new User(      userData.localId,      userData.email,      userData.idToken,      expirationTime    );
     this._user.next(user);
-    this.autoLogout(user.tokenDuration);
-    this.storeAuthData(
-      userData.localId,
-      userData.idToken,
-      expirationTime.toISOString(),
-      userData.email
-    );
+    this.setNewTimer(user.tokenDuration);
+    
+    this.storeAuthData(      userData.localId,      userData.idToken,      expirationTime.toISOString(),     userData.email    );
   }
 
-  private storeAuthData(
-    userId: string,
-    token: string,
-    tokenExpirationDate: string,
-    email: string
-  ) {
-    const data = JSON.stringify({
-      userId: userId,
-      token: token,
-      tokenExpirationDate: tokenExpirationDate,
-      email: email
-    });
+  private storeAuthData(    userId: string,    token: string,    tokenExpirationDate: string,    email: string  ) {
+    const data = JSON.stringify({      userId: userId,      token: token,      tokenExpirationDate: tokenExpirationDate,      email: email    });
     Plugins.Storage.set({ key: 'authData', value: data });
   }
 }
